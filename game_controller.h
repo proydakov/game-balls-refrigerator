@@ -13,7 +13,7 @@ class GameController : public QObject
     Q_OBJECT
 
 public:
-    GameController(size_t size, QObject* parent);
+    GameController(size_t size, QObject* parent = 0);
     ~GameController();
 
     void addGrip(GripWidget* item);
@@ -30,9 +30,9 @@ public slots:
 
 private slots:
     void swap(const QPoint &position);
+    void trySwap(const QPoint &position, const QPoint &test_position);
 
 private:
-    void trySwap(const QPoint &position, const QPoint &test_position);
     size_t calcIndex(const QPoint &position);
 
 private:

@@ -20,7 +20,9 @@ SOURCES += main.cpp\
     game_controller.cpp \
     start_widget.cpp \
     record_widget.cpp \
-    record_manager.cpp
+    record_manager.cpp \
+    animation_controller.cpp \
+    animated_widget.cpp
 
 HEADERS  += \
     grip_widget.h \
@@ -29,7 +31,9 @@ HEADERS  += \
     game_controller.h \
     start_widget.h \
     record_widget.h \
-    record_manager.h
+    record_manager.h \
+    animation_controller.h \
+    animated_widget.h
 
 RESOURCES += \
     resources.qrc

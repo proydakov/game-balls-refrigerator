@@ -1,0 +1,4 @@
+#ifndef ANIMATED_WIDGET_H
+#define ANIMATED_WIDGET_H
+
+#endif // ANIMATED_WIDGET_H

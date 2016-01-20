@@ -1,17 +1,27 @@
-#include <QDebug>
+#include <QTimer>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
 
+#include <QDebug>
+
 #include "grip_widget.h"
 
-GripWidget::GripWidget(const QPoint& position, const QPixmap& pixmap, QWidget* parent) :
+GripWidget::GripWidget(bool state, const QPoint& position, const QPixmap& pixmap, QWidget* parent) :
     QWidget(parent),
-    m_state(false),
+    m_state(state),
+    m_process(true),
     m_pixmap(pixmap),
     m_position(position),
-    m_textPen(Qt::red)
+    m_textPen(Qt::red),
+    m_angle(0),
+    m_destAngle(0)
 {
+    m_background = QBrush(QColor(160, 160, 160));
+    if(!m_state) {
+        m_angle = 90;
+        m_destAngle = 90;
+    }
     m_textFont.setPixelSize(30);
 }
 
@@ -28,12 +38,31 @@ const QPoint& GripWidget::getPosition() const
 void GripWidget::setState( bool state )
 {
     m_state = state;
-    update();
+    m_destAngle += 90;
+    emit requireAnimate(m_position);
 }
 
 bool GripWidget::getState( ) const
 {
     return m_state;
+}
+
+void GripWidget::setProcess(bool state)
+{
+    m_process = state;
+}
+
+void GripWidget::animate()
+{
+    //qDebug() <<"update: " << this << "current: " << m_angle << "dest: " << m_destAngle;
+
+    if(m_angle < m_destAngle) {
+        m_angle += 1;
+    }
+    else {
+        emit finishAnimate();
+    }
+    update();
 }
 
 void GripWidget::paintEvent(QPaintEvent *event)
@@ -45,11 +74,11 @@ void GripWidget::paintEvent(QPaintEvent *event)
 
     auto drawRect = event->rect();
 
+    painter.fillRect(drawRect, m_background);
+
     painter.save();
     painter.translate(drawRect.width() / 2, drawRect.height() / 2);
-    if(!m_state) {
-        painter.rotate(90);
-    }
+    painter.rotate(m_angle);
     QRect target( -drawRect.width() / 2, -drawRect.height() / 2, drawRect.width(), drawRect.height());
     painter.drawPixmap(target, m_pixmap, m_pixmap.rect());
 
@@ -60,7 +89,9 @@ void GripWidget::paintEvent(QPaintEvent *event)
 
 void GripWidget::mousePressEvent( QMouseEvent * event )
 {
-    setState(!m_state);
-    emit stateChange(m_position);
+    if(m_process) {
+        setState(!m_state);
+        emit stateChange(m_position);
+    }
     QWidget::mousePressEvent(event);
 }

@@ -32,6 +32,10 @@ RecordManager::~RecordManager()
 
 void RecordManager::trySetRecord(qint64 time)
 {
+    if(time < 100) {
+        // skip cheat =)
+        return;
+    }
     bool sort = false;
     if(m_records.size() < params::size) {
         m_records.push_back(time);

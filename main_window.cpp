@@ -16,6 +16,7 @@
 #include "start_widget.h"
 #include "record_widget.h"
 #include "game_controller.h"
+#include "animation_controller.h"
 #include "record_manager.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -51,27 +52,34 @@ void MainWindow::start(size_t size)
 
     const QPixmap pixmap( ":/res/images/grip.png" );
 
-    GameController* controller = new GameController(size, central);
+    GameController* gameController = new GameController(size, central);
+    AnimationController* animationController = new AnimationController(size, central);
+
     for(size_t x = 0; x < size; x++) {
         LockWidget *lock = new LockWidget(x, central);
         layout->addWidget(lock, 0, x);
-        controller->addLock(lock);
+        gameController->addLock(lock);
 
         for(size_t y = 0; y < size; y++) {
             const int value = rand() % 2;
             const QPoint position(x, y);
-            GripWidget *native = new GripWidget(position, pixmap, central);
-            native->setState(value);
-            layout->addWidget(native, y + 1, x);
-            controller->addGrip(native);
+            GripWidget *grip = new GripWidget(value, position, pixmap, central);
+            layout->addWidget(grip, y + 1, x);
+            gameController->addGrip(grip);
+            animationController->addGrip(grip);
+            central->connect(grip, SIGNAL(stateChange(QPoint)), animationController, SLOT(stateChange()));
+            central->connect(grip, SIGNAL(requireAnimate(QPoint)), animationController, SLOT(requireAnimate(QPoint)));
+            central->connect(grip, SIGNAL(finishAnimate()), animationController, SLOT(finishAnimate()));
         }
     }
     central->setLayout(layout);
     setCentralWidget(central);
 
-    controller->connect(controller, SIGNAL(solve(qint64)), this, SLOT(solve(qint64)));
-    controller->start();
-    controller->validate();
+    central->connect(animationController, SIGNAL(allAnimationsComplete()), gameController, SLOT(validate()));
+
+    central->connect(gameController, SIGNAL(solve(qint64)), this, SLOT(solve(qint64)));
+    gameController->start();
+    gameController->validate();
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)

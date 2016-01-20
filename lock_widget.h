@@ -10,12 +10,12 @@ class LockWidget : public QWidget
     Q_OBJECT
 
 public:
-    LockWidget( size_t column, QWidget *parent = 0 );
-    ~LockWidget( );
+    LockWidget(size_t column, QWidget *parent = 0);
+    ~LockWidget();
 
     size_t getColumn() const;
 
-    void setState( bool s );
+    void setState(bool s);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;

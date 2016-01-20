@@ -43,7 +43,6 @@ void GameController::stateChange(const QPoint &position)
     qDebug() << "GameController::stateChange " << position;
 
     swap(position);
-    validate();
 }
 
 void GameController::validate()
