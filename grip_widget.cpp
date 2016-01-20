@@ -13,9 +13,7 @@ GripWidget::GripWidget(const QPoint& position, QWidget* parent) :
     m_backgroundBlack(QColor(0, 0, 0)),
     m_textPen(Qt::red)
 {
-    m_textFont.setPixelSize(50);
-
-    setFixedSize(100, 100);
+    m_textFont.setPixelSize(30);
 }
 
 GripWidget::~GripWidget()

@@ -12,8 +12,7 @@ LockWidget::LockWidget(size_t column, QWidget *parent) :
     m_backgroundUnlock(QColor(0, 255, 0)),
     m_textPen(Qt::blue)
 {
-    m_textFont.setPixelSize(50);
-    setFixedSize(100, 100);
+    m_textFont.setPixelSize(45);
 }
 
 LockWidget::~LockWidget()

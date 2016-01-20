@@ -4,7 +4,8 @@
 
 #include <QDebug>
 
-GameController::GameController(int size) :
+GameController::GameController(size_t size, QObject* parent) :
+    QObject(parent),
     m_size(size)
 {
     m_grips.resize(m_size * m_size, nullptr);

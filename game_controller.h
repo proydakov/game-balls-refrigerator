@@ -13,7 +13,7 @@ class GameController : public QObject
     Q_OBJECT
 
 public:
-    GameController(int size);
+    GameController(size_t size, QObject* parent);
     ~GameController();
 
     void addGrip(GripWidget* item);

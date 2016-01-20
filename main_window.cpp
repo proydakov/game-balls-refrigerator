@@ -1,6 +1,8 @@
 #include <ctime>
 
 #include <QLabel>
+#include <QPushButton>
+
 #include <QPainter>
 #include <QGridLayout>
 #include <QPaintEvent>
@@ -10,6 +12,7 @@
 #include "main_window.h"
 #include "grip_widget.h"
 #include "lock_widget.h"
+#include "start_widget.h"
 #include "game_controller.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -22,16 +25,25 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(tr("Game balls refrigerator"));
     setFixedSize(600, 750);
 
-    QWidget *central = new QWidget(this);
+    create();
+}
 
+MainWindow::~MainWindow()
+{
+}
+
+void MainWindow::start(size_t size)
+{
+    qDebug() << "start: " << size;
+
+    QWidget *central = new QWidget(this);
     QGridLayout *layout = new QGridLayout(central);
 
-    const size_t size = 4;
-    m_controller.reset(new GameController(size));
+    GameController* controller = new GameController(size, central);
     for(size_t x = 0; x < size; x++) {
         LockWidget *lock = new LockWidget(x, central);
         layout->addWidget(lock, 0, x);
-        m_controller->addLock(lock);
+        controller->addLock(lock);
 
         for(size_t y = 0; y < size; y++) {
             const int value = rand() % 2;
@@ -39,20 +51,16 @@ MainWindow::MainWindow(QWidget *parent) :
             GripWidget *native = new GripWidget(position, central);
             native->setState(value);
             layout->addWidget(native, y + 1, x);
-            m_controller->addGrip(native);
+            controller->addGrip(native);
         }
     }
 
-    m_controller->connect(m_controller.get(), SIGNAL(solve()), this, SLOT(solve()));
-    m_controller->validate();
+    controller->connect(controller, SIGNAL(solve()), this, SLOT(solve()));
+    controller->validate();
 
     central->setLayout(layout);
 
     setCentralWidget(central);
-}
-
-MainWindow::~MainWindow()
-{
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -62,25 +70,64 @@ void MainWindow::paintEvent(QPaintEvent *event)
     painter.fillRect(event->rect(), m_background);
 }
 
+void MainWindow::create()
+{
+    qDebug() << "create";
+
+    QWidget *central = new QWidget(this);
+
+    QGridLayout *layout = new QGridLayout(central);
+
+    const size_t max_size = 10;
+    const size_t min_size = 2;
+    const size_t size = max_size - min_size + 1;
+    Q_ASSERT(size > 0);
+    std::vector<QWidget*> items(size, nullptr);
+    for(size_t i = 0; i < size; i++) {
+        items[i] = new StartWidget(i + min_size, central);
+        items[i]->connect(items[i], SIGNAL(select(size_t)), this, SLOT(start(size_t)));
+    }
+
+    const size_t max_x = 3;
+    const size_t max_y = size / max_x + 1;
+    layout->addWidget(items[0], 0, 0);
+    for(size_t x = 0; x < max_x; x++) {
+        for(size_t y = 0; y < max_y; y++) {
+            const size_t index = x + y * max_x;
+            if(index >= items.size()) {
+                break;
+            }
+            layout->addWidget(items[index], y, x);
+        }
+    }
+    central->setLayout(layout);
+
+    setCentralWidget(central);
+}
+
 void MainWindow::solve()
 {
     qDebug() << "solve";
+
+    QFont font;
+    font.setPointSize(72);
+    font.setBold(true);
 
     QWidget *central = new QWidget(this);
 
     QGridLayout *layout = new QGridLayout(central);
     QLabel* text = new QLabel(tr("Solve!"), central);
     text->setAlignment(Qt::AlignCenter);
-
-    QFont font = text->font();
-    font.setPointSize(72);
-    font.setBold(true);
     text->setFont(font);
 
-    layout->addWidget(text, 0, 0);
-    central->setLayout(layout);
+    QPushButton *button = new QPushButton(tr("Restart"), central);
+    button->setFont(font);
+    button->connect(button, SIGNAL(clicked(bool)), this, SLOT(create()));
 
-    m_controller.reset();
+    layout->addWidget(text, 0, 0);
+    layout->addWidget(button, 1, 0);
+
+    central->setLayout(layout);
 
     setCentralWidget(central);
 }

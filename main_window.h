@@ -1,10 +1,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <memory>
 #include <QMainWindow>
-
-class GameController;
 
 class MainWindow : public QMainWindow
 {
@@ -14,14 +11,17 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void start(size_t size);
+
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private slots:
+    void create();
     void solve();
 
 private:
-    std::shared_ptr<GameController> m_controller;
     QBrush m_background;
 };
 

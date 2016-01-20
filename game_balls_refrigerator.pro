@@ -17,10 +17,12 @@ SOURCES += main.cpp\
     grip_widget.cpp \
     main_window.cpp \
     lock_widget.cpp \
-    game_controller.cpp
+    game_controller.cpp \
+    start_widget.cpp
 
 HEADERS  += \
     grip_widget.h \
     main_window.h \
     lock_widget.h \
-    game_controller.h
+    game_controller.h \
+    start_widget.h
