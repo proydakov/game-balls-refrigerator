@@ -2,9 +2,10 @@
 
 #include <QLabel>
 #include <QPushButton>
+#include <QGridLayout>
+#include <QVBoxLayout>
 
 #include <QPainter>
-#include <QGridLayout>
 #include <QPaintEvent>
 
 #include <QDebug>
@@ -13,12 +14,18 @@
 #include "grip_widget.h"
 #include "lock_widget.h"
 #include "start_widget.h"
+#include "record_widget.h"
 #include "game_controller.h"
+#include "record_manager.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    m_records.reset(new RecordManager);
     m_background = QBrush(QColor(192, 192, 192));
+
+    m_buttonFont.setPointSize(60);
+    m_buttonFont.setBold(true);
 
     srand(time(NULL));
 
@@ -54,13 +61,12 @@ void MainWindow::start(size_t size)
             controller->addGrip(native);
         }
     }
-
-    controller->connect(controller, SIGNAL(solve()), this, SLOT(solve()));
-    controller->validate();
-
     central->setLayout(layout);
-
     setCentralWidget(central);
+
+    controller->connect(controller, SIGNAL(solve(qint64)), this, SLOT(solve(qint64)));
+    controller->start();
+    controller->validate();
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -75,8 +81,14 @@ void MainWindow::create()
     qDebug() << "create";
 
     QWidget *central = new QWidget(this);
+    setCentralWidget(central);
 
-    QGridLayout *layout = new QGridLayout(central);
+    QVBoxLayout *centralLayout = new QVBoxLayout(central);
+    central->setLayout(centralLayout);
+
+    QWidget *control = new QWidget(central);
+
+    QGridLayout *layout = new QGridLayout(control);
 
     const size_t max_size = 10;
     const size_t min_size = 2;
@@ -84,7 +96,7 @@ void MainWindow::create()
     Q_ASSERT(size > 0);
     std::vector<QWidget*> items(size, nullptr);
     for(size_t i = 0; i < size; i++) {
-        items[i] = new StartWidget(i + min_size, central);
+        items[i] = new StartWidget(i + min_size, control);
         items[i]->connect(items[i], SIGNAL(select(size_t)), this, SLOT(start(size_t)));
     }
 
@@ -100,28 +112,43 @@ void MainWindow::create()
             layout->addWidget(items[index], y, x);
         }
     }
-    central->setLayout(layout);
+    control->setLayout(layout);
 
-    setCentralWidget(central);
+    centralLayout->addWidget(control);
+
+    QPushButton* button = new QPushButton(tr("Records"), central);
+    button->setMinimumHeight(100);
+    button->connect(button, SIGNAL(clicked(bool)), this, SLOT(records()));
+
+    button->setFont(m_buttonFont);
+
+    centralLayout->addWidget(button);
 }
 
-void MainWindow::solve()
+void MainWindow::records()
 {
-    qDebug() << "solve";
+    qDebug() << "records";
 
-    QFont font;
-    font.setPointSize(72);
-    font.setBold(true);
+    RecordWidget *widget = new RecordWidget(m_records.get(), m_buttonFont, this);
+    setCentralWidget(widget);
+    widget->connect(widget, SIGNAL(back()), this, SLOT(create()));
+}
+
+void MainWindow::solve(qint64 time)
+{
+    qDebug() << "solve time: " << time << " ms";
+
+    m_records->trySetRecord(time);
 
     QWidget *central = new QWidget(this);
 
     QGridLayout *layout = new QGridLayout(central);
-    QLabel* text = new QLabel(tr("Solve!"), central);
+    QLabel* text = new QLabel(tr("Solve!\nTime: %1 sec").arg(time / 1000), central);
     text->setAlignment(Qt::AlignCenter);
-    text->setFont(font);
+    text->setFont(m_buttonFont);
 
-    QPushButton *button = new QPushButton(tr("Restart"), central);
-    button->setFont(font);
+    QPushButton *button = new QPushButton(tr("Сontinue"), central);
+    button->setFont(m_buttonFont);
     button->connect(button, SIGNAL(clicked(bool)), this, SLOT(create()));
 
     layout->addWidget(text, 0, 0);

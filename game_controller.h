@@ -19,8 +19,10 @@ public:
     void addGrip(GripWidget* item);
     void addLock(LockWidget* item);
 
+    void start();
+
 signals:
-    void solve();
+    void solve(qint64);
 
 public slots:
     void stateChange(const QPoint &position);
@@ -37,6 +39,7 @@ private:
     const size_t m_size;
     std::vector<GripWidget*> m_grips;
     std::vector<LockWidget*> m_locks;
+    qint64 m_start;
 };
 
 #endif // GAME_CONTROLLER_H

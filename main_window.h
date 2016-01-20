@@ -1,7 +1,12 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <memory>
+
+#include <QFont>
 #include <QMainWindow>
+
+class RecordManager;
 
 class MainWindow : public QMainWindow
 {
@@ -19,10 +24,13 @@ protected:
 
 private slots:
     void create();
-    void solve();
+    void records();
+    void solve(qint64 time);
 
 private:
+    std::unique_ptr<RecordManager> m_records;
     QBrush m_background;
+    QFont  m_buttonFont;
 };
 
 #endif // MAIN_WINDOW_H

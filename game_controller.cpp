@@ -1,3 +1,5 @@
+#include <QDateTime>
+
 #include "grip_widget.h"
 #include "lock_widget.h"
 #include "game_controller.h"
@@ -6,7 +8,8 @@
 
 GameController::GameController(size_t size, QObject* parent) :
     QObject(parent),
-    m_size(size)
+    m_size(size),
+    m_start(0)
 {
     m_grips.resize(m_size * m_size, nullptr);
     m_locks.resize(m_size);
@@ -15,6 +18,11 @@ GameController::GameController(size_t size, QObject* parent) :
 GameController::~GameController()
 {
     qDebug() << "~GameController: " << this;
+}
+
+void GameController::start()
+{
+    m_start = QDateTime::currentDateTime().toMSecsSinceEpoch();
 }
 
 void GameController::addGrip(GripWidget* item)
@@ -53,7 +61,9 @@ void GameController::validate()
         qDebug() << "lock " << i << " state: " << open;
     }
     if(m_size == solve_counter) {
-        emit solve();
+        auto current = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        auto delta = current - m_start;
+        emit solve(delta);
     }
 }
 

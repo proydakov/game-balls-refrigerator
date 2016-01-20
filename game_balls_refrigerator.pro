@@ -18,11 +18,15 @@ SOURCES += main.cpp\
     main_window.cpp \
     lock_widget.cpp \
     game_controller.cpp \
-    start_widget.cpp
+    start_widget.cpp \
+    record_widget.cpp \
+    record_manager.cpp
 
 HEADERS  += \
     grip_widget.h \
     main_window.h \
     lock_widget.h \
     game_controller.h \
-    start_widget.h
+    start_widget.h \
+    record_widget.h \
+    record_manager.h
