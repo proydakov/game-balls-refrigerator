@@ -8,7 +8,7 @@
 #include "grip_widget.h"
 
 GripWidget::GripWidget(bool state, const QPoint& position, const QPixmap& pixmap, QWidget* parent) :
-    QWidget(parent),
+    AnimatedWidget(parent),
     m_state(state),
     m_process(true),
     m_pixmap(pixmap),
@@ -45,11 +45,6 @@ void GripWidget::setState( bool state )
 bool GripWidget::getState( ) const
 {
     return m_state;
-}
-
-void GripWidget::setProcess(bool state)
-{
-    m_process = state;
 }
 
 void GripWidget::animate()
@@ -89,7 +84,7 @@ void GripWidget::paintEvent(QPaintEvent *event)
 
 void GripWidget::mousePressEvent( QMouseEvent * event )
 {
-    if(m_process) {
+    if(isActive()) {
         setState(!m_state);
         emit stateChange(m_position);
     }

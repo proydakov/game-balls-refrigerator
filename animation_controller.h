@@ -4,35 +4,33 @@
 #include <QTimer>
 #include <QObject>
 
-class GripWidget;
+class AnimatedWidget;
 
 class AnimationController : public QObject
 {
     Q_OBJECT
 
 public:
-    AnimationController(size_t size, QObject* parent = 0);
+    AnimationController(QObject* parent = 0);
     ~AnimationController();
 
-    void addGrip(GripWidget* item);
+    void addAnimatedWidget(AnimatedWidget* widget);
 
 signals:
     void allAnimationsComplete();
 
 public slots:
     void stateChange();
-    void requireAnimate(const QPoint &position);
+    void requireAnimate();
     void finishAnimate();
 
 private:
     void tryFinishAnimations();
-    size_t calcIndex(const QPoint &position);
 
 private:
-    size_t m_size;
     int    m_animate;
     QTimer m_timer;
-    std::vector<GripWidget*> m_grips;
+    std::vector<AnimatedWidget*> m_widgets;
 };
 
 #endif // ANIMATION_CONTROLLER_H

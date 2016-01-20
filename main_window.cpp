@@ -53,7 +53,7 @@ void MainWindow::start(size_t size)
     const QPixmap pixmap( ":/res/images/grip.png" );
 
     GameController* gameController = new GameController(size, central);
-    AnimationController* animationController = new AnimationController(size, central);
+    AnimationController* animationController = new AnimationController(central);
 
     for(size_t x = 0; x < size; x++) {
         LockWidget *lock = new LockWidget(x, central);
@@ -66,9 +66,9 @@ void MainWindow::start(size_t size)
             GripWidget *grip = new GripWidget(value, position, pixmap, central);
             layout->addWidget(grip, y + 1, x);
             gameController->addGrip(grip);
-            animationController->addGrip(grip);
+            animationController->addAnimatedWidget(grip);
             central->connect(grip, SIGNAL(stateChange(QPoint)), animationController, SLOT(stateChange()));
-            central->connect(grip, SIGNAL(requireAnimate(QPoint)), animationController, SLOT(requireAnimate(QPoint)));
+            central->connect(grip, SIGNAL(requireAnimate(QPoint)), animationController, SLOT(requireAnimate()));
             central->connect(grip, SIGNAL(finishAnimate()), animationController, SLOT(finishAnimate()));
         }
     }

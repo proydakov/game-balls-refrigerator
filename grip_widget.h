@@ -3,9 +3,9 @@
 
 #include <QPen>
 #include <QFont>
-#include <QWidget>
+#include <animated_widget.h>
 
-class GripWidget : public QWidget
+class GripWidget : public AnimatedWidget
 {
     Q_OBJECT
 
@@ -18,10 +18,8 @@ public:
     void setState(bool state);
     bool getState() const;
 
-    void setProcess(bool state);
-
 public slots:
-    void animate();
+    void animate() Q_DECL_OVERRIDE;
 
 signals:
     void stateChange(const QPoint &position);

@@ -2,14 +2,12 @@
 
 #include "QDebug"
 
-#include "grip_widget.h"
+#include "animated_widget.h"
 
-AnimationController::AnimationController(size_t size, QObject* parent) :
+AnimationController::AnimationController(QObject* parent) :
     QObject(parent),
-    m_size(size),
     m_animate(0)
 {
-    m_grips.resize(m_size * m_size, nullptr);
 }
 
 AnimationController::~AnimationController()
@@ -17,26 +15,26 @@ AnimationController::~AnimationController()
     qDebug() << "~AnimationController: " << this;
 }
 
-void AnimationController::addGrip(GripWidget* item)
+void AnimationController::addAnimatedWidget(AnimatedWidget* widget)
 {
-    const size_t index = calcIndex(item->getPosition());
-    m_grips[index] = item;
+    m_widgets.push_back(widget);
 }
 
 void AnimationController::stateChange()
 {
-    for(size_t i = 0; i < m_grips.size(); i++) {
-        m_grips[i]->setProcess(false);
+    for(size_t i = 0; i < m_widgets.size(); i++) {
+        m_widgets[i]->setActive(false);
     }
     m_timer.start(17);
 }
 
-void AnimationController::requireAnimate(const QPoint &position)
+void AnimationController::requireAnimate()
 {
     qDebug() << "requireAnimate: " << sender();
 
-    const size_t index = calcIndex(position);
-    auto item = m_grips[index];
+    auto item = qobject_cast<AnimatedWidget*>(sender());
+    Q_ASSERT(item);
+
     connect(&m_timer, SIGNAL(timeout()), item, SLOT(animate()));
     m_animate++;
 }
@@ -45,7 +43,9 @@ void AnimationController::finishAnimate()
 {
     qDebug() << "finishAnimate: " << sender();
 
-    auto item = qobject_cast<GripWidget*>(sender());
+    auto item = qobject_cast<AnimatedWidget*>(sender());
+    Q_ASSERT(item);
+
     disconnect(&m_timer, SIGNAL(timeout()), item, SLOT(animate()));
     m_animate--;
     tryFinishAnimations();
@@ -56,14 +56,8 @@ void AnimationController::tryFinishAnimations()
     if(0 == m_animate) {
         emit allAnimationsComplete();
         m_timer.stop();
-        for(size_t i = 0; i < m_grips.size(); i++) {
-            m_grips[i]->setProcess(true);
+        for(size_t i = 0; i < m_widgets.size(); i++) {
+            m_widgets[i]->setActive(true);
         }
     }
-}
-
-size_t AnimationController::calcIndex(const QPoint &position)
-{
-    size_t index = position.x() + m_size * position.y();
-    return index;
 }
