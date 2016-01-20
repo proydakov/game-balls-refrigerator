@@ -28,8 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_buttonFont.setPointSize(60);
     m_buttonFont.setBold(true);
 
-    srand(time(NULL));
-
     setWindowTitle(tr("Game balls refrigerator"));
     setFixedSize(600, 750);
 
@@ -46,6 +44,8 @@ MainWindow::~MainWindow()
 void MainWindow::start(size_t size)
 {
     qDebug() << "start: " << size;
+
+    srand(time(NULL));
 
     QWidget *central = new QWidget(this);
     QGridLayout *layout = new QGridLayout(central);
@@ -103,8 +103,8 @@ void MainWindow::create()
 
     QGridLayout *layout = new QGridLayout(control);
 
+    const size_t min_size = 4;
     const size_t max_size = 10;
-    const size_t min_size = 2;
     const size_t size = max_size - min_size + 1;
     Q_ASSERT(size > 0);
     std::vector<QWidget*> items(size, nullptr);

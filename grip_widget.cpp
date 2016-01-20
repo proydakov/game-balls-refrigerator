@@ -10,14 +10,13 @@
 GripWidget::GripWidget(bool state, const QPoint& position, const QPixmap& pixmap, QWidget* parent) :
     AnimatedWidget(parent),
     m_state(state),
-    m_process(true),
+    m_angle(0),
+    m_destAngle(0),
+    m_background(QColor(160, 160, 160)),
     m_pixmap(pixmap),
     m_position(position),
-    m_textPen(Qt::red),
-    m_angle(0),
-    m_destAngle(0)
+    m_textPen(Qt::red)
 {
-    m_background = QBrush(QColor(160, 160, 160));
     if(!m_state) {
         m_angle = 90;
         m_destAngle = 90;
@@ -55,6 +54,10 @@ void GripWidget::animate()
         m_angle += 1;
     }
     else {
+        if(m_angle >= 360) {
+            m_angle = m_angle % 360;
+            m_destAngle = m_angle % 360;
+        }
         emit finishAnimate();
     }
     update();

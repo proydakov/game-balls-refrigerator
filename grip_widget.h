@@ -32,14 +32,14 @@ protected:
 
 private:
     bool m_state;
-    bool m_process;
-    QBrush m_background;
-    const QPixmap m_pixmap;
     const QPoint m_position;
-    QPen  m_textPen;
-    QFont m_textFont;
     int m_angle;
     int m_destAngle;
+
+    QBrush m_background;
+    const QPixmap m_pixmap;
+    QPen  m_textPen;
+    QFont m_textFont;
 };
 
 #endif // GRIP_WIDGET_H

@@ -15,7 +15,7 @@ public:
 
     size_t getColumn() const;
 
-    void setState(bool s);
+    void setState(bool state);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;

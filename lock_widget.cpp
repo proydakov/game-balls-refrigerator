@@ -25,9 +25,9 @@ size_t LockWidget::getColumn() const
     return m_column;
 }
 
-void LockWidget::setState(bool s)
+void LockWidget::setState(bool state)
 {
-    m_state = s;
+    m_state = state;
     update();
 }
 
@@ -48,5 +48,4 @@ void LockWidget::paintEvent(QPaintEvent *event)
     painter.setFont(m_textFont);
     QString text = QString("%1").arg(m_column);
     painter.drawText(event->rect(), Qt::AlignCenter, text);
-
 }
