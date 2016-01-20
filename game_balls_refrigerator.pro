@@ -30,3 +30,6 @@ HEADERS  += \
     start_widget.h \
     record_widget.h \
     record_manager.h
+
+RESOURCES += \
+    resources.qrc

@@ -32,6 +32,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(tr("Game balls refrigerator"));
     setFixedSize(600, 750);
 
+    const QPixmap pixmap( ":/res/images/icon.jpg" );
+    setWindowIcon(QIcon(pixmap));
+
     create();
 }
 
