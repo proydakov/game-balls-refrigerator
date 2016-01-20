@@ -32,6 +32,8 @@ void GameController::addLock(LockWidget *item)
 void GameController::stateChange(const QPoint &position)
 {
     qDebug() << "GameController::stateChange " << position;
+
+    swap(position);
     validate();
 }
 
@@ -51,6 +53,25 @@ void GameController::validate()
     }
     if(m_size == solve_counter) {
         emit solve();
+    }
+}
+
+void GameController::swap(const QPoint &position)
+{
+    for(size_t i = 0; i < m_size; i++) {
+        const QPoint vertical(i, position.y());
+        const QPoint horizontal(position.x(), i);
+        trySwap(position, vertical);
+        trySwap(position, horizontal);
+    }
+}
+
+void GameController::trySwap(const QPoint &position, const QPoint &test_position)
+{
+    if(test_position != position) {
+        const size_t index = calcIndex(test_position);
+        const bool state = m_grips[index]->getState();
+        m_grips[index]->setState( !state );
     }
 }
 

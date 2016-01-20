@@ -26,7 +26,11 @@ public slots:
     void stateChange(const QPoint &position);
     void validate();
 
+private slots:
+    void swap(const QPoint &position);
+
 private:
+    void trySwap(const QPoint &position, const QPoint &test_position);
     size_t calcIndex(const QPoint &position);
 
 private:
