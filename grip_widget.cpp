@@ -5,12 +5,11 @@
 
 #include "grip_widget.h"
 
-GripWidget::GripWidget(const QPoint& position, QWidget* parent) :
+GripWidget::GripWidget(const QPoint& position, const QPixmap& pixmap, QWidget* parent) :
     QWidget(parent),
     m_state(false),
+    m_pixmap(pixmap),
     m_position(position),
-    m_backgroundWhite(QColor(255, 255, 255)),
-    m_backgroundBlack(QColor(0, 0, 0)),
     m_textPen(Qt::red)
 {
     m_textFont.setPixelSize(30);
@@ -39,19 +38,22 @@ bool GripWidget::getState( ) const
 
 void GripWidget::paintEvent(QPaintEvent *event)
 {
-    const QBrush* brush;
-    if(m_state) {
-        brush = &m_backgroundWhite;
-    }
-    else {
-        brush = &m_backgroundBlack;
-    }
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(event->rect(), *brush);
     painter.setPen(m_textPen);
     painter.setFont(m_textFont);
+
+    auto drawRect = event->rect();
+
+    painter.save();
+    painter.translate(drawRect.width() / 2, drawRect.height() / 2);
+    if(!m_state) {
+        painter.rotate(90);
+    }
+    QRect target( -drawRect.width() / 2, -drawRect.height() / 2, drawRect.width(), drawRect.height());
+    painter.drawPixmap(target, m_pixmap, m_pixmap.rect());
+
+    painter.restore();
     QString text = QString("%1,%2").arg(m_position.x()).arg(m_position.y());
     painter.drawText(event->rect(), Qt::AlignCenter, text);
 }

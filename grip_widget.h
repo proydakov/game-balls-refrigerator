@@ -10,7 +10,7 @@ class GripWidget : public QWidget
     Q_OBJECT
 
 public:
-    GripWidget(const QPoint& position, QWidget *parent = 0);
+    GripWidget(const QPoint& position, const QPixmap& pixmap, QWidget *parent = 0);
     ~GripWidget();
 
     const QPoint& getPosition() const;
@@ -27,9 +27,8 @@ protected:
 
 private:
     bool m_state;
+    const QPixmap m_pixmap;
     const QPoint m_position;
-    const QBrush m_backgroundWhite;
-    const QBrush m_backgroundBlack;
     QPen  m_textPen;
     QFont m_textFont;
 };

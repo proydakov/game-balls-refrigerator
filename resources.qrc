@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/res">
         <file>images/icon.jpg</file>
+        <file>images/grip.png</file>
     </qresource>
 </RCC>
