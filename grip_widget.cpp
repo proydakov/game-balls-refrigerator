@@ -51,7 +51,7 @@ void GripWidget::animate()
     //qDebug() <<"update: " << this << "current: " << m_angle << "dest: " << m_destAngle;
 
     if(m_angle < m_destAngle) {
-        m_angle += 1;
+        m_angle += 5;
     }
     else {
         if(m_angle >= 360) {

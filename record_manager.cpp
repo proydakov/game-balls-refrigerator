@@ -20,14 +20,6 @@ RecordManager::RecordManager()
 RecordManager::~RecordManager()
 {
     qDebug() << "~RecordManager: " << this;
-
-    QList<QVariant> list;
-    for(size_t i = 0; i < m_records.size(); i++) {
-        const qint64 value = m_records[i];
-        list.push_back(QVariant(value));
-    }
-    QVariant data(list);
-    m_settings->setValue(KEY, data);
 }
 
 void RecordManager::trySetRecord(qint64 time)
@@ -36,24 +28,36 @@ void RecordManager::trySetRecord(qint64 time)
         // skip cheat =)
         return;
     }
-    bool sort = false;
+    bool save_cond = false;
     if(m_records.size() < params::size) {
         m_records.push_back(time);
-        sort = true;
+        save_cond = true;
     }
     else {
         const size_t last_index = params::size - 1;
         if(m_records[last_index] > time) {
             m_records[last_index] = time;
-            sort = true;
+            save_cond = true;
         }
     }
-    if(sort) {
+    if(save_cond) {
         std::sort(m_records.begin(), m_records.end());
+        save();
     }
 }
 
 const RecordManager::records& RecordManager::getRecords() const
 {
     return m_records;
+}
+
+void RecordManager::save()
+{
+    QList<QVariant> list;
+    for(size_t i = 0; i < m_records.size(); i++) {
+        const qint64 value = m_records[i];
+        list.push_back(QVariant(value));
+    }
+    QVariant data(list);
+    m_settings->setValue(KEY, data);
 }

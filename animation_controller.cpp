@@ -25,7 +25,7 @@ void AnimationController::stateChange()
     for(size_t i = 0; i < m_widgets.size(); i++) {
         m_widgets[i]->setActive(false);
     }
-    m_timer.start(10);
+    m_timer.start(50);
 }
 
 void AnimationController::requireAnimate()

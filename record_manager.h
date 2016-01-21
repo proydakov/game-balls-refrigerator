@@ -24,6 +24,9 @@ public:
     const records& getRecords() const;
 
 private:
+    void save();
+
+private:
     std::unique_ptr<QSettings> m_settings;
     records m_records;
 };
