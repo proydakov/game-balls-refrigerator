@@ -10,11 +10,11 @@
 GripWidget::GripWidget(bool state, const QPoint& position, const QPixmap& pixmap, QWidget* parent) :
     AnimatedWidget(parent),
     m_state(state),
+    m_position(position),
     m_angle(0),
     m_destAngle(0),
     m_background(QColor(160, 160, 160)),
     m_pixmap(pixmap),
-    m_position(position),
     m_textPen(Qt::red)
 {
     if(!m_state) {

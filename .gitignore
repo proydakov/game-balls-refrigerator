@@ -1,1 +1,9 @@
+Makefile
+.qmake.stash
+
 *.user
+*.o
+moc_*.h
+moc_*.cpp
+qrc_resources.cpp
+game_balls_refrigerator
